@@ -1,21 +1,63 @@
 import requests
 import pymongo
 import yaml
+import time
 
 with open('config.yaml', 'r') as file:
     mongo_creds = yaml.safe_load(file)
 
-# dataset creation
-market_array = requests.get("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from=1672531200&to=1680020825", headers=None).json()
-zoinker_man = [{"time":i[0], "price": i[1] , "market_cap": j[1], "volume": k[1]} for i, j, k in zip(market_array["prices"], market_array["market_caps"], market_array["total_volumes"])]
-zoinker_man = sorted(zoinker_man, key=lambda d: d['time']) 
-zoinkers_dataset = []
-for z in range(len(zoinker_man)-14):
-    zoinkers_dataset.append({"data":zoinker_man[z:z+15]})
+def create_features(begin_time:int):
+    '''
+    parameters
+    ----------
+    begin_time: Unix time of the last entry in the database
 
-# upload to db
-myclient = pymongo.MongoClient()
-mydb = myclient["bitcoin_data"]
-feature_collection = mydb["features"]
-x = feature_collection.insert_many(zoinkers_dataset)
-print(x.inserted_ids)
+    this is a funciton that grabs all of the prices and such and creates the feature sequences from begin_time to present
+    '''
+    market_array = requests.get("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from={}&to={}".format(begin_time, time.time()), headers=None).json()
+    zoinker_man = [{"time":i[0], "price": i[1] , "market_cap": j[1], "volume": k[1]} for i, j, k in zip(market_array["prices"], market_array["market_caps"], market_array["total_volumes"])]
+    zoinker_man = sorted(zoinker_man, key=lambda d: d['time']) 
+    zoinkers_dataset = []
+    for z in range(len(zoinker_man)-14):
+        zoinkers_dataset.append({"data":zoinker_man[z:z+15]})
+    return zoinkers_dataset
+
+def get_collection(database_name:str, collection_name:str):
+    '''
+    parameters
+    -----------
+    database_name: string that is the name of the database trying to access
+    collection_name: string that is the name of the collection you are trying to acess data from
+    '''
+    myclient = pymongo.MongoClient(mongo_creds["mongo_url"].format(mongo_creds["mongo_username"],mongo_creds["mongo_password"]))
+    mydb = myclient[database_name]
+    return mydb[collection_name]
+
+def get_features_from_collection(collection):
+    '''
+    parameters
+    -----------
+    collection: this is the acutal pymongo class that represents a collection from the database
+
+    this function creates pytorch dataset 14 elements of the sequence are used to predict and the 15th is the element being predicted
+    '''
+    return
+
+def expand_db(collection):
+    '''
+    parameters
+    ----------
+    collection: this is a pymongo class that is the actual collection from the dataset 
+
+    this function updates the database with new feature sequences sense the last unix time update
+    '''
+    # get last time stamp in the mongo db
+    last_sample = collection.find().sort({'time':-1}).limit(1)
+    last_array = last_sample["data"]
+    last_time = last_array[len(last_array) - 1]["time"]
+    new_data = create_features(last_time)
+    myclient = pymongo.MongoClient(mongo_creds["mongo_url"].format(mongo_creds["mongo_username"], mongo_creds["mongo_password"]))
+    mydb = myclient["bitcoin_data"]
+    feature_collection = mydb["features"]
+    feature_collection.insert_many(new_data)
+
