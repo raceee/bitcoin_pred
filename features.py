@@ -2,6 +2,7 @@ import requests
 import pymongo
 import yaml
 import time
+import torch
 
 with open('config.yaml', 'r') as file:
     mongo_creds = yaml.safe_load(file)
@@ -33,7 +34,7 @@ def get_collection(database_name:str, collection_name:str):
     mydb = myclient[database_name]
     return mydb[collection_name]
 
-def get_features_from_collection(collection):
+def get_features_from_collection(collection, return_all_channels=True):
     '''
     parameters
     -----------
@@ -41,7 +42,20 @@ def get_features_from_collection(collection):
 
     this function creates pytorch dataset 14 elements of the sequence are used to predict and the 15th is the element being predicted
     '''
-    return
+    dataset_X = []
+    dataset_Y = []
+    for record in collection.find():
+        record_feature_X = []
+        record_feature_Y = []
+        for i, data in enumerate(record["data"]):
+            if i == len(record["data"]) - 1:
+                record_feature_Y.append(torch.FloatTensor([data["price"], data["market_cap"], data["volume"]]))
+            else:
+                record_feature_X.append(torch.FloatTensor([data["price"], data["market_cap"], data["volume"]]))
+        dataset_X.append(torch.vstack(record_feature_X).unsqueeze(dim=0))
+        dataset_Y.append(torch.vstack(record_feature_Y))
+
+    return torch.vstack(dataset_X), torch.vstack(dataset_Y)
 
 def expand_db(collection):
     '''
