@@ -15,6 +15,7 @@ def create_features(begin_time:int):
 
     this is a funciton that grabs all of the prices and such and creates the feature sequences from begin_time to present
     '''
+    begin_time = begin_time / 1000 # coingecko works on unix milisecond time
     market_array = requests.get("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=usd&from={}&to={}".format(begin_time, time.time()), headers=None).json()
     zoinker_man = [{"time":i[0], "price": i[1] , "market_cap": j[1], "volume": k[1]} for i, j, k in zip(market_array["prices"], market_array["market_caps"], market_array["total_volumes"])]
     zoinker_man = sorted(zoinker_man, key=lambda d: d['time']) 
@@ -66,12 +67,21 @@ def expand_db(collection):
     this function updates the database with new feature sequences sense the last unix time update
     '''
     # get last time stamp in the mongo db
-    last_sample = collection.find().sort({'time':-1}).limit(1)
-    last_array = last_sample["data"]
-    last_time = last_array[len(last_array) - 1]["time"]
+    _, last_time = get_last(collection)
     new_data = create_features(last_time)
     myclient = pymongo.MongoClient(mongo_creds["mongo_url"].format(mongo_creds["mongo_username"], mongo_creds["mongo_password"]))
     mydb = myclient["bitcoin_data"]
     feature_collection = mydb["features"]
     feature_collection.insert_many(new_data)
 
+def get_last(collection):
+    """
+    helper function for expand_db, this gets the last time stamp 
+    """
+    time__ = 0
+    for record in collection.find():
+        if record["data"][len(record["data"]) - 1]['time'] >= time__:
+            newest_record = record
+            time__ = record["data"][len(record["data"]) - 1]['time']
+    return newest_record, time__
+        
