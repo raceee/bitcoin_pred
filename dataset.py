@@ -12,9 +12,9 @@ class SequenceSet(torch.utils.data.Dataset):
         return self.x.shape[0]
     
     def normalize(self,X):
-        scaler_one = preprocessing.StandardScaler().fit(X[:,:,0])
-        scaler_two = preprocessing.StandardScaler().fit(X[:,:,1])
-        scaler_three = preprocessing.StandardScaler().fit(X[:,:,2])
+        scaler_one = preprocessing.MinMaxScaler().fit(X[:,:,0])
+        scaler_two = preprocessing.MinMaxScaler().fit(X[:,:,1])
+        scaler_three = preprocessing.MinMaxScaler().fit(X[:,:,2])
 
         one_scaled = torch.from_numpy(scaler_one.transform(X[:,:,0]))
         two_scaled = torch.from_numpy(scaler_two.transform(X[:,:,1]))
