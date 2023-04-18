@@ -24,7 +24,12 @@ class SequenceModel(nn.Module):
     
     def test_one_epoch(self, test_dataloader):
         return
-if __name__ == "__main__":
-    xx = torch.randn(10,14,3)
-    model = SequenceModel()
-    print(model(xx))
+
+def training_():
+    return
+
+def test_():
+    return
+
+# if __name__ == "__main__":
+#     while True:
