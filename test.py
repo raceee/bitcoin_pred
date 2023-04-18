@@ -10,7 +10,7 @@ BATCH_SIZE = 16
 col = features.get_collection("bitcoin_data", "features")
 
 # data from db to pytorch dataloaders
-xx,yy = features.get_features_from_collection(col)
+xx,yy = features.get_features_from_collection(col) # TODO: see if there is any synthetic data for financial stuff
 x_train, x_test, y_train, y_test = train_test_split(xx,yy, test_size=30, random_state=42)
 training_data = SequenceSet(x_train, y_train)
 test_data = SequenceSet(x_test, y_test)
@@ -22,9 +22,9 @@ model = SequenceModel()
 
 # optimizer
 optimizer = torch.optim.Adam(model.parameters(),lr=1)
-scheduler = ExponentialLR(optimizer, gamma=0.9)
+scheduler = ExponentialLR(optimizer, gamma=0.9) # this might need to change one day
 
-best_epoch = {"epoch_num":0, "training_loss":1000000000, "test_loss":1000000000}
+best_epoch = {"epoch_num":0, "training_loss":1000000000, "test_loss":1000000000} # TODO: #1 this needs to hold all historical losses
 epoch_count = 0
 noprog = 0
 while True:
