@@ -1,12 +1,12 @@
-import features
+import features as features
 from dataset import SequenceSet
-from training import SequenceModel
+from model import SequenceModel
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
-import torch.nn.functional as F
 import torch
 from torch.optim.lr_scheduler import ExponentialLR
 BATCH_SIZE = 16
+
 col = features.get_collection("bitcoin_data", "features")
 
 # data from db to pytorch dataloaders

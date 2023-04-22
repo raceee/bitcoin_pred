@@ -3,6 +3,7 @@ import pymongo
 import yaml
 import time
 import torch
+WEEK = 604800
 
 with open('config.yaml', 'r') as file:
     mongo_creds = yaml.safe_load(file)
@@ -68,12 +69,14 @@ def expand_db(collection):
     '''
     # get last time stamp in the mongo db
     _, last_time = get_last(collection)
-    new_data = create_features(last_time)
-    myclient = pymongo.MongoClient(mongo_creds["mongo_url"].format(mongo_creds["mongo_username"], mongo_creds["mongo_password"]))
-    mydb = myclient["bitcoin_data"]
-    feature_collection = mydb["features"]
-    feature_collection.insert_many(new_data)
-
+    time_diff = time.time() - (last_time/1000)
+    if time_diff >= WEEK:
+        new_data = create_features(last_time)
+        myclient = pymongo.MongoClient(mongo_creds["mongo_url"].format(mongo_creds["mongo_username"], mongo_creds["mongo_password"]))
+        mydb = myclient["bitcoin_data"]
+        feature_collection = mydb["features"]
+        feature_collection.insert_many(new_data)
+    
 def get_last(collection):
     """
     helper function for expand_db, this gets the last time stamp 

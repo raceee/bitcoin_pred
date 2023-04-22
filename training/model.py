@@ -13,23 +13,3 @@ class SequenceModel(nn.Module):
     def forward(self, input):
         x, (hn, cn) = self.lstm(input.float())
         return self.linear(torch.squeeze(hn)) # use linear activation for regression
-
-    def one_epoch(self, train_dataloader):
-        running_loss = 0
-
-        for i, data in train_dataloader:
-            input, label = data
-            self.fo
-        return
-    
-    def test_one_epoch(self, test_dataloader):
-        return
-
-def training_():
-    return
-
-def test_():
-    return
-
-# if __name__ == "__main__":
-#     while True:
