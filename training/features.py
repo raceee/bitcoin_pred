@@ -34,7 +34,11 @@ def get_collection(database_name:str, collection_name:str):
     '''
     myclient = pymongo.MongoClient(mongo_creds["mongo_url"].format(mongo_creds["mongo_username"],mongo_creds["mongo_password"]))
     mydb = myclient[database_name]
-    return mydb[collection_name]
+    if collection_name in mydb.list_collections():
+        return mydb[collection_name]
+    else:
+        print("Collection didn't exsist in the database so one was created")
+        return mydb[collection_name]
 
 def get_features_from_collection(collection, return_all_channels=True):
     '''
@@ -87,4 +91,3 @@ def get_last(collection):
             newest_record = record
             time__ = record["data"][len(record["data"]) - 1]['time']
     return newest_record, time__
-        

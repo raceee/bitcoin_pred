@@ -5,9 +5,11 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader
 import torch
 from torch.optim.lr_scheduler import ExponentialLR
+import io
 BATCH_SIZE = 16
 
 col = features.get_collection("bitcoin_data", "features")
+model_collection = features.get_collection("bitcoin_data", "model_weights")
 
 # data from db to pytorch dataloaders
 xx,yy = features.get_features_from_collection(col) # TODO: see if there is any synthetic data for financial stuff
@@ -57,6 +59,7 @@ while True:
     if best_epoch["test_loss"] >= test_epoch_loss:
         print("Average Loss: ${}".format(test_epoch_loss))
         best_epoch = {"epoch_num":epoch_count,"training_loss":train_epoch_loss, "test_loss":test_epoch_loss}
+        best_model = model.state_dict()
         no_prog = 0
     else:
         no_prog += 1
@@ -66,7 +69,12 @@ while True:
             scheduler.step()
     epoch_count += 1
 
+# upload to database
+state_dict_bytes = io.BytesIO()
+torch.save(best_model, state_dict_bytes)
 
-
+print("Uploading new model to the database")
+print("The model achieved \n", best_epoch)
+model_collection.insert_one({"params": state_dict_bytes.getvalue()})
 
 
