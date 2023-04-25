@@ -9,7 +9,7 @@ import yaml
 TIME_GAP = 604800 * 2
 import os 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-with open('config.yaml', 'r') as file:
+with open('keys.yaml', 'r') as file:
     mongo_creds = yaml.safe_load(file)
 
 # connect to the database
