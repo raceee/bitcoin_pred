@@ -32,7 +32,7 @@ def get_collection(database_name:str, collection_name:str):
     database_name: string that is the name of the database trying to access
     collection_name: string that is the name of the collection you are trying to acess data from
     '''
-    myclient = pymongo.MongoClient(mongo_creds["mongo_url"].format(mongo_creds["mongo_username"],mongo_creds["mongo_password"]))
+    myclient = pymongo.MongoClient(mongo_creds["mongo_url"].format(mongo_creds["mongo_password"]))
     mydb = myclient[database_name]
     if collection_name in mydb.list_collections():
         return mydb[collection_name]
