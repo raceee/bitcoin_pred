@@ -76,7 +76,7 @@ def expand_db(collection):
     time_diff = time.time() - (last_time/1000)
     if time_diff >= WEEK:
         new_data = create_features(last_time)
-        myclient = pymongo.MongoClient(mongo_creds["mongo_url"].format(mongo_creds["mongo_username"], mongo_creds["mongo_password"]))
+        myclient = pymongo.MongoClient(mongo_creds["mongo_url"].format(mongo_creds["mongo_password"]))
         mydb = myclient["bitcoin_data"]
         feature_collection = mydb["features"]
         feature_collection.insert_many(new_data)

@@ -1,2 +1,5 @@
 pymongo
-"pymongo[srv]"
+torch
+sklearn
+pyyaml
+requests

@@ -16,6 +16,9 @@ with open('keys.yaml', 'r') as file:
 # connect to the database
 model_collection = features.get_collection("bitcoin_data", "model_weights")
 
+# expand the database if a week as past
+features.expand_db(features.get_collection("bitcoin_data", "features"))
+
 # set the state_dict
 most_recent_document = model_collection.find_one(sort=[('_id', DESCENDING)], limit=1)
 state_dict_bytes = io.BytesIO(most_recent_document["params"])
