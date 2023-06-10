@@ -1,7 +1,7 @@
 import pymongo
 import yaml
 
-with open('keys.yaml', 'r') as file:
+with open('config.yaml', 'r') as file:
     mongo_creds = yaml.safe_load(file)
 print(mongo_creds["mongo_username"],mongo_creds["mongo_password"])
 myclient = pymongo.MongoClient("mongodb+srv://race:{}@bitcoinpred.mknwdgp.mongodb.net/?retryWrites=true&w=majority".format(mongo_creds["mongo_password"]))

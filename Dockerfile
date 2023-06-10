@@ -1,8 +1,8 @@
-FROM python:3.9-alpine
+FROM python:3.9
 
 COPY requirements.txt ./requirements.txt
 
-COPY keys.yaml ./keys.yaml
+COPY config.yaml ./config.yaml
 
 COPY main.py ./main.py
 
@@ -10,6 +10,14 @@ COPY features.py ./features.py
 
 COPY model.py ./model.py
 
-RUN pip install -requirements.txt
+COPY test.py ./test.py
 
-RUN ["python", "-u", "./main.py"]
+RUN pip install --upgrade pip
+
+RUN pip install numpy
+
+RUN python -m pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu113
+
+RUN pip install -r requirements.txt
+
+CMD python main.py

@@ -1,5 +1,4 @@
 pymongo
-torch
 sklearn
 pyyaml
 requests

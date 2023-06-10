@@ -5,7 +5,7 @@ import time
 import torch
 WEEK = 604800
 
-with open('keys.yaml', 'r') as file:
+with open('config.yaml', 'r') as file:
     mongo_creds = yaml.safe_load(file)
 
 def create_features(begin_time:int):
