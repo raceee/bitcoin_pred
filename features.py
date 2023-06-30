@@ -34,7 +34,7 @@ def get_collection(database_name:str, collection_name:str):
     '''
     myclient = pymongo.MongoClient(mongo_creds["mongo_url"].format(mongo_creds["mongo_password"]))
     mydb = myclient[database_name]
-    if collection_name in mydb.list_collections():
+    if collection_name in mydb.list_collection_names():
         return mydb[collection_name]
     else:
         print("Collection didn't exsist in the database so one was created")

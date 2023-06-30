@@ -4,7 +4,7 @@ from sklearn import preprocessing
 class SequenceSet(torch.utils.data.Dataset):
     def __init__(self, X, Y) -> None:
         super().__init__()
-        self.x = self.normalize(X)
+        self.x = X
         self.y = Y
         
 

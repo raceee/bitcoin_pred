@@ -47,4 +47,4 @@ tweet_text = """One hour from {} the price of $BTC will be ${} \n \n \n #neuraln
 
 client.create_tweet(text=tweet_text)
 
-# TODO: #3 #2 do I have to do min max scaling for the input for the model in the field?
+# TODO: #3 #2 do I have to do min max scaling for the input for the model in the field
