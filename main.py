@@ -43,8 +43,8 @@ pred = model(input_array).item()
 import tweepy
 client = tweepy.Client(bearer_token=mongo_creds["twitter_api_bearer_tok"], consumer_key=mongo_creds["twitter_api_key"], consumer_secret=mongo_creds["twitter_api_secret"], access_token=mongo_creds["twitter_api_access_tok"], access_token_secret=mongo_creds["twitter_api_access_tok_secret"])
 
-tweet_text = """One hour from {} the price of $BTC will be ${} \n \n \n #neuralnetwork #crypto #ml""".format(datetime.fromtimestamp(last_time/1000), pred)
+tweet_time = (last_time/1000) + 3600
+
+tweet_text = """At {} (1 hour from now) the price of $BTC will be ${} \n \n \n #neuralnetwork #crypto #ml""".format(datetime.fromtimestamp(last_time/1000), pred)
 
 client.create_tweet(text=tweet_text)
-
-# TODO: #3 #2 do I have to do min max scaling for the input for the model in the field
