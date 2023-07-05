@@ -1,5 +1,5 @@
 import torch
-from model import SequenceModel
+from training.model import SequenceModel
 import features
 from pymongo import DESCENDING
 import io
@@ -25,6 +25,7 @@ state_dict_bytes = io.BytesIO(most_recent_document["params"])
 
 model = SequenceModel()
 model.load_state_dict(torch.load(state_dict_bytes))
+model.eval()
 
 # call the coingeecko api
 begin_time = time.time() - TIME_GAP # coingecko works on unix milisecond time

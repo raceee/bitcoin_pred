@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 import torch
 from torch.optim.lr_scheduler import ExponentialLR
 import io
-BATCH_SIZE = 16
+BATCH_SIZE = 8
 
 col = features.get_collection("bitcoin_data", "features")
 model_collection = features.get_collection("bitcoin_data", "model_weights")
